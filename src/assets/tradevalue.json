@@ -1,0 +1,12 @@
+
+    [
+    {"country": "Brazil","trade_2017": 150.75, "latitude": -9.588903, "longtitude": -51.619789 },
+    {"country": "Canada","trade_2017": 432.41, "latitude": 55.585901, "longtitude":-105.750596},
+    {"country": "China","trade_2017": 1843.79, "latitude": 35.486703, "longtitude":101.901875},
+    {"country": "Australia","trade_2017": 228.44, "latitude": -25.734968, "longtitude":134.489563},
+    {"country": "United States of America","trade_2017": 2407.39, "latitude": 39.381266, "longtitude":-97.922211},
+    {"country": "United Kingdom","trade_2017": 641.33, "latitude": 54.237933, "longtitude":-2.36967},
+    {"country": "Japan","trade_2017": 671.47, "latitude": 36.386493, "longtitude":138.59223},
+    {"country": "India","trade_2017": 444.05, "latitude": 23.3112, "longtitude":77.7922},
+    {"country": "Germany","trade_2017": 1173.63, "latitude": 51.133481, "longtitude":10.018343},
+    {"country": "France","trade_2017": 613.13, "latitude": 47.824905, "longtitude":2.618787}]
