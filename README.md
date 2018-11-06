@@ -1,27 +1,50 @@
 # Kepler
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.5.
+## Team Member
+- Yuning Zhu, zhuyunin@usc.edu
+- Yukang Tian, yukangti@usc.edu 
+- Chen Lou, chenlou@usc.edu
 
-## Development server
+## Introduction
+Have you ever wondered how space science has improved over years? Which country has most satellites? Where are these satellites? What're their uses?
+The Visualization presents information about universal satellites in multi-dimensional aspects
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Data Source
+- Data is obtained from [UCS Satellite Database](https://www.ucsusa.org/nuclear-weapons/space-weapons/satellite-database#.W9z4f3pKhTb)
+- Detailed, massive information on every working satellite
 
-## Code scaffolding
+## Summary
+### Launch Map
+- Choropleth
+- Different filters: number of satellites of countries, number of satellites launched by countries, 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Orbit and Distribution
+- Three main orbits: LEO, MEO, GEO ; some interesting elliptical orbits
+- Can be filtered by country
 
-## Build
+### Insight
+- Combination of several basic charts
+- line chart: year and number of satellites
+- Pie chart: percentage of number of satellites of different countries/ others
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
+## Development Setup
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Node and npm
+- Make sure you have latest Node and npm
+- Use `npm install` to install necessary packages for running the project
 
-## Running end-to-end tests
+### D3 and Javascript
+- For first part, geojson is used to draw the world map
+- For second part, 
+- For third part,
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Angular App
+- This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.5.
 
-## Further help
+### Bootstrap
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Deployment
+- Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+- Deploy on USC SCF
+- [Link to Published Page](http://www-scf.usc.edu/~zhuyunin/kepler/index.html) (not yet)
