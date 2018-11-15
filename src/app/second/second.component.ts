@@ -27,7 +27,7 @@ export class SecondComponent implements OnInit {
     var medium_earth_radius = 25000;
     var geosynchronous_radius = 40000;
     var country_list = ["United States", "China", "Russia", "Japan", "Others"];
-    var purpose_list = [""]
+    var purpose_list = ["Communications", "Earth Observation", "Technology Development", "Navigation/Global Positioning", "Space Science", "Others"];
     var radius_scale_earth = d3.scaleLinear().domain([0,earth_radius]).range([0,height]);
     var radius_reverse_earth = d3.scaleLinear().range([0,earth_radius]).domain([0,height]);
     var radius_scale_leo = d3.scaleLinear().domain([0,low_earth_radius+earth_radius]).range([0,height]);
@@ -37,15 +37,51 @@ export class SecondComponent implements OnInit {
 
     var color_scale_country = d3.scaleOrdinal(d3.schemeCategory10);
     var color_scale_purpose = d3.scaleOrdinal(d3.schemeCategory10);
+    var divNode:any = d3.select("body").node();
+    var defs = svg.append("defs");
+    var filter = defs.append("filter")
+                    .attr("id", "drop-shadow")
+                    .attr("height","130%");
+    
+    filter.append("feGaussianBlur")
+            .attr("in","SourceAlpha")
+            .attr("stdDeviation", 3)
+            .attr("result", "blur");
+    
+    filter.append("feOffset")
+        .attr("in", "blur")
+        .attr("dx", 3)
+        .attr("dy", 3)
+        .attr("result", "offsetBlur");
+        var feMerge = filter.append("feMerge");
+    
+    feMerge.append("feMergeNode")
+        .attr("in", "offsetBlur")
+    feMerge.append("feMergeNode")
+        .attr("in", "SourceGraphic");
 
     function country_number(country){
-      if (country == "United States") 
-        {return 1}
+      if (country == "USA") 
+        {return 0}
       else if (country == "China")
-        {return 2}
+        {return 1}
       else if (country == "Russia")
-        {return 3}
+        {return 2}
       else if (country == "Japan")
+        {return 3}
+      else
+        {return 4}
+    }
+    function purpose_number(purpose){
+      if (purpose == purpose_list[0]) 
+        {return 0}
+      else if (purpose == purpose_list[1])
+        {return 1}
+      else if (purpose == purpose_list[2])
+        {return 2}
+      else if (purpose == purpose_list[3])
+        {return 3}
+      else if (purpose == purpose_list[4])
         {return 4}
       else
         {return 5}
@@ -121,7 +157,7 @@ export class SecondComponent implements OnInit {
       .append("circle")
       .attr("class","satellites")
       .attr("transform", "translate(" + (width / 2) + "," +0 + ")")
-      .attr("r", 2)
+      .attr("r", 3)
       .attr("fill", "gold")
       .attr("saved_x", function(d:any){
         return (6400 + +d.Perigee) * Math.cos(Math.random()* Math.PI);
@@ -147,6 +183,42 @@ export class SecondComponent implements OnInit {
       })
       .attr("cy", function(d:any){
         return radius_scale_geo(+d3.select(this).attr("saved_y"));
+      })
+
+      svg.selectAll(".satellites")
+      .on("mouseover",function(d:any){
+        var mousePos = d3.mouse(divNode);
+        var tooltip = d3.select("#tooltip")
+        .style("left", mousePos[0] - 200 + "px")
+        .style("top", mousePos[1] - 100 + "px");
+        tooltip.select("#t_country")
+        .text(d["Country of Operator/Owner"]);
+        tooltip.select("#t_operator")
+        .text(d["Operator/Owner"]);
+        tooltip.select("#t_user")
+        .text(d["Users"]);
+        tooltip.select("#t_purpose")
+        .text(d["Purpose"]);
+        tooltip.select("#t_class")
+        .text(d["Class of Orbit"]);
+        tooltip.select("#t_perigee")
+        .text(d["Perigee"]);
+        tooltip.select("#t_apogee")
+        .text(d["Apogee"]);
+        tooltip.select("#t_date")
+        .text(d["Date of Launch"]);
+        tooltip.select("#t_site")
+        .text(d["Launch Site"]);
+        tooltip.select("#t_vehicle")
+        .text(d["Launch Vehicle"]);
+
+        //Show the tooltip
+        d3.select("#tooltip").classed("hidden", false);
+
+      })
+      .on("mouseout", function(d:any){
+        //Hide the tooltip
+        d3.select("#tooltip").classed("hidden", true);
       })
 
       d3.select("#show_low")
@@ -304,7 +376,7 @@ export class SecondComponent implements OnInit {
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
-        .duration(2000)
+        .duration(1000)
         .attr("fill", function(d,i):any{
           return color_scale_country(""+country_number(d["Country of Operator/Owner"]))
         })
@@ -314,7 +386,7 @@ export class SecondComponent implements OnInit {
         .enter()
         .append("circle")
         .attr("class", "legend_circles")
-        .attr("cx", width)
+        .attr("cx", width+width)
         .attr("cy", function(d,i){
           return i*50+20;
         })
@@ -327,7 +399,7 @@ export class SecondComponent implements OnInit {
         .enter()
         .append("text")
         .attr("class", "legend_labels")
-        .attr("x", width+5)
+        .attr("x", width+width)
         .attr("y", function(d,i){
           return i*50+20;
         })
@@ -338,6 +410,44 @@ export class SecondComponent implements OnInit {
         .text(function(d){
           return d;
         })
+        svg.selectAll(".legend_circles")
+        .data(country_list)
+        .exit()
+        .transition()
+        .delay(300)
+        .duration(1300)
+        .attr("cx", width+width)
+        .remove()
+        svg.selectAll(".legend_labels")
+        .data(country_list)
+        .exit()
+        .transition()
+        .delay(300)
+        .duration(1300)
+        .attr("x", width+width)
+        .remove()
+        svg.selectAll(".legend_circles")
+        .data(country_list)
+        .transition()
+        .delay(300)
+        .duration(1500)
+        .attr("cx", width)
+        .attr("fill", function(d,i){
+          return color_scale_country(""+i);
+        })
+        svg.selectAll(".legend_labels")
+        .data(country_list)
+        .transition()
+        .delay(300)
+        .duration(1500)
+        .attr("x", width+5)
+        .attr("fill", function(d,i){
+          return color_scale_country(""+i);
+        })
+        .text(function(d, i){
+          return d;
+        })
+
       })
 
       d3.select("#by_use")
@@ -345,10 +455,69 @@ export class SecondComponent implements OnInit {
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
-        .duration(2000)
+        .duration(1000)
         .attr("fill", function(d,i):any{
-          return color_scale_purpose(d["Purpose"])
+          return color_scale_purpose(""+purpose_number(d["Purpose"]))
         })
+        svg.selectAll(".legend_circles")
+        .data(purpose_list)
+        .enter()
+        .append("circle")
+        .attr("class", "legend_circles")
+        .attr("cx", width+width)
+        .attr("cy", function(d,i){
+          return i*50+20;
+        })
+        .attr("r", 5)
+        .attr("fill", function(d,i){
+          return "black";
+        })
+        svg.selectAll(".legend_labels")
+        .data(purpose_list)
+        .enter()
+        .append("text")
+        .attr("class", "legend_labels")
+        .attr("x", width+width)
+        .attr("y", function(d,i){
+          return i*50+20;
+        })
+        .attr("fill", function(d,i){
+          return "black";
+        })
+        .attr('alignment-baseline', 'middle')
+        .text(function(d){
+          return "";
+        })
+        svg.selectAll(".legend_circles")
+        .data(purpose_list)
+        .transition()
+        .delay(300)
+        .duration(1400)
+        .attr("cx", width)
+        .attr("cy", function(d,i){
+          return i*50+20;
+        })
+        .attr("r", 5)
+        .attr("fill", function(d,i){
+          return color_scale_purpose(""+i);
+        })
+        svg.selectAll(".legend_labels")
+        .data(purpose_list)
+        .transition()
+        .delay(300)
+        .duration(1500)
+        .attr("x", width+5)
+        .attr("y", function(d,i){
+          return i*50+20;
+        })
+        .attr("fill", function(d,i){
+          return color_scale_purpose(""+i);
+        })
+        .attr('alignment-baseline', 'middle')
+        .text(function(d){
+          return d;
+        })
+
       })
     })
     // svg.append("circle")
