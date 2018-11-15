@@ -28,10 +28,7 @@ export class FirstpartComponent implements OnInit {
 
 
     d3.json("src/assets/world_geojson.json").then(function (json: any) {
-      var colorScale = d3.scaleLinear()
-        .domain([0, 300])
-        .range(['white','blue']);
-
+      var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0,300]);
       var projection = d3.geoMercator().fitSize([width, height + 100], json);
       var path = d3.geoPath().projection(projection);
 
@@ -103,10 +100,11 @@ export class FirstpartComponent implements OnInit {
 
         svg.append("text")
           .attr("x", width / 2)
-          .attr("y", 10)
+          .attr("y", 20)
           .attr("font-size", 20)
           .attr("font-weight", "bold")
-          .text("Proportional Symbol Map for Import Trade Value of 10 Countries in 2017")
+          .style('text-anchor', 'middle')
+          .text("Proportional Symbol Map for World Satellites")
         // console.log(d3.extent(data, function(d:trade){return d.trade_2017}))
         gg.selectAll(".first_legend")
           .data(d3.extent(data, function (d: trade) { return d.trade_2017 }))
@@ -124,11 +122,10 @@ export class FirstpartComponent implements OnInit {
           .append("text")
           .attr("x", width - 200 + 55)
           .attr("y", function (d, i) { return height - 200 - i * 20; })
-          .text(function (d) { return d + "billion$" });
+          .text(function (d) { return Math.round(d/10) + " Satellites" });
       })
     });
 
-    
   }
 
 }
