@@ -407,6 +407,7 @@ export class SecondComponent implements OnInit {
           return color_scale_country(""+i);
         })
         .attr('alignment-baseline', 'middle')
+        .attr("font-size", 10)
         .text(function(d){
           return d;
         })
@@ -444,6 +445,7 @@ export class SecondComponent implements OnInit {
         .attr("fill", function(d,i){
           return color_scale_country(""+i);
         })
+        .attr("font-size", 10)
         .text(function(d, i){
           return d;
         })
@@ -485,6 +487,7 @@ export class SecondComponent implements OnInit {
           return "black";
         })
         .attr('alignment-baseline', 'middle')
+        .attr("font-size", 10)
         .text(function(d){
           return "";
         })
@@ -514,12 +517,101 @@ export class SecondComponent implements OnInit {
           return color_scale_purpose(""+i);
         })
         .attr('alignment-baseline', 'middle')
+        .attr("font-size", 10)
         .text(function(d){
           return d;
         })
 
       })
+
+      d3.select("#donut")
+      .on("click", function(){
+        svg.selectAll(".satellites")
+        .attr("saved_x2", function(d:any){
+          var xrange = Math.random();
+          if(d["Country of Operator/Owner"] == "USA"){
+            if(+d["Perigee"] <= 1500){
+              xrange = Math.random() * 0.51;
+            }
+            else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
+              xrange = Math.random() * 0.28;
+            }
+            else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
+              xrange = Math.random() * 0.36;
+            }
+          }
+          else if(d["Country of Operator/Owner"] == "Russia"){
+            if(+d["Perigee"] <= 1500){
+              console.log("RUSSIA, LEO")
+              xrange = Math.random() * 0.07 + 0.51;
+            }
+            else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
+              xrange = Math.random() * 0.26 + 0.28;
+            }
+            else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
+              console.log("RUSSIA, GEO")
+
+              xrange = Math.random() * 0.05 + 0.36;
+            }
+          }
+          else if(d["Country of Operator/Owner"] == "China"){
+            if(+d["Perigee"] <= 1500){
+              xrange = Math.random() * 0.16 + 0.58;
+            }
+            else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
+              xrange = Math.random() * 0.13 + 0.54;
+            }
+            else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
+              xrange = Math.random() * 0.09 + 0.41;
+            }
+          }
+          else if(d["Country of Operator/Owner"] == "Japan"){
+            if(+d["Perigee"] <= 1500){
+              xrange = Math.random() * 0.03 + 0.74;
+            }
+            else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
+              xrange = Math.random() * 0 + 0.67;
+            }
+            else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
+              xrange = Math.random() * 0.05 + 0.5;
+            }
+          }
+          else{
+            if(+d["Perigee"] <= 1500){
+              xrange = Math.random() * 0.23 + 0.77;
+            }
+            else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
+              xrange = Math.random() * 0.34 + 0.66;
+            }
+            else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
+              xrange = Math.random() * 0.43 + 0.57;
+            }
+          }
+          return (6400 + +d.Perigee) * Math.cos(xrange * Math.PI);
+        })
+        .attr("saved_y2", function(d:any){
+          return Math.sqrt(Math.pow((6400 + +d.Perigee),2) - Math.pow(+d3.select(this).attr("saved_x2"), 2));;
+        })
+        .attr("id", function(d,i){
+          return d["Country of Operator/Owner"]  +"," +d["Class of Orbit"];
+        })
+        svg.selectAll(".satellites")
+        .transition()
+        .delay(500)
+        .duration(1000)
+        .attr("cx", function(d:any){
+          return radius_scale_geo(+d3.select(this).attr("saved_x2"));
+        })
+        .attr("cy", function(d:any){
+          return radius_scale_geo(+d3.select(this).attr("saved_y2"));
+
+        })
+      })
+
+
+
     })
+    
     // svg.append("circle")
     //   .attr("class", "earth")
     //   .attr("cx", width/2)
