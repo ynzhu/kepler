@@ -18,18 +18,17 @@ export class FirstpartComponent implements OnInit {
     var svg = d3.select("#worldmap")
       .append("svg")
       .attr("class", "first")
-      .attr("width", "1280")
-      .attr("height", "1500"),
+      .attr("width", window.innerWidth)
+      .attr("height", window.innerHeight-200),
       width = +svg.attr("width"),
       height = +svg.attr("height");
 
     var gg = svg.append("g")
-      .attr("transform", "translate(0 15)");
 
 
     d3.json("src/assets/world_geojson.json").then(function (json: any) {
       var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
-      var projection = d3.geoMercator().fitSize([width, height + 100], json);
+      var projection = d3.geoMercator().fitSize([width, height + 250], json);
       var path = d3.geoPath().projection(projection);
 
       gg.selectAll("path")
@@ -60,7 +59,7 @@ export class FirstpartComponent implements OnInit {
           .data(json.features)
           .enter()
           .append("path")
-          .attr("class","states")
+          .attr("class", "states")
           .attr("fill", function (d, i) {
             var index = countryArray.indexOf(d["properties"]["NAME"]);
             if (index >= 0) {
@@ -75,8 +74,6 @@ export class FirstpartComponent implements OnInit {
       });
     });
 
-    var width = 960;
-    var height = 500;
     var radius = 20;
     var margin = 100;
 
@@ -114,6 +111,8 @@ export class FirstpartComponent implements OnInit {
       .style("cursor", "ew-resize")
       .call(drag);
 
+    var last_time = -1;
+
     function dragmove(d) {
       function get_year(d) {
         if (d > 500) {
@@ -134,77 +133,97 @@ export class FirstpartComponent implements OnInit {
       var date_now = new Date();
       var original_time = date_now.getTime();
       if (x_value_of_circle > 1) {
-        d3.json("src/assets/world_geojson.json").then(function (json: any) {
-          var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
-          var projection = d3.geoMercator().fitSize([width, height + 100], json);
-          var path = d3.geoPath().projection(projection);
-          d3.json("src/assets/temp_tyk_country_launch_num2.json").then(function (country: any) {
-            var countryArray = new Array();
-            countryArray = country.map(d => d.country);
-            var valueArray = country.map(d => d.num);
-            var jsonValueArray = new Array();
+        if (last_time != x_value_of_circle) {
+          d3.json("src/assets/world_geojson.json").then(function (json: any) {
+            var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
+            var projection = d3.geoMercator().fitSize([width, height + 100], json);
+            var path = d3.geoPath().projection(projection);
+            d3.json("src/assets/temp_tyk_country_launch_num2.json").then(function (country: any) {
+              // var date_now = new Date();
+              // var origin_time = date_now.getTime();
+              // var now_time = date_now.getTime();
+              // console.log("start_time"+now_time)
+              // var first_count = date_now.getTime();
+              // console.log("before deal with array" + first_count)
 
-            var jsonCountryArray = new Array();
-            for (var j = 0; j < countryArray.length; j++) {
-              for (var i = 0; i < json.features.length; i++) {
-                if (json.features[i]["properties"]["NAME"] == countryArray[j]) {
-                  jsonCountryArray.push(json.features[i]);
-                  jsonValueArray.push(valueArray[j]);
+              var countryArray = new Array();
+              countryArray = country.map(d => d.country);
+              var valueArray = country.map(d => d.num);
+              var jsonValueArray = new Array();
+
+              var jsonCountryArray = new Array();
+              for (var j = 0; j < countryArray.length; j++) {
+                for (var i = 0; i < json.features.length; i++) {
+                  if (json.features[i]["properties"]["NAME"] == countryArray[j]) {
+                    jsonCountryArray.push(json.features[i]);
+                    jsonValueArray.push(valueArray[j]);
+                  }
                 }
               }
-            }
+              // var second_count = date_now.getTime();
+              // console.log("after deal with array" + second_count)
 
-            gg.selectAll(".states")
-              .data(json.features)
-              .attr("fill", function (d, i) {
-                var index = countryArray.indexOf(d["properties"]["NAME"]);
-                if (index >= 0) {
-                  // console.log(d["properties"]["NAME"] + " " + jsonValueArray[index]);
-                  return (colorScale(jsonValueArray[index]));
-                } else {
-                  return "white";
-                }
-              })
-              .attr("stroke", "black")
-              .attr("d", path);
+
+              gg.selectAll(".states")
+                .data(json.features)
+                .attr("fill", function (d, i) {
+                  var index = countryArray.indexOf(d["properties"]["NAME"]);
+                  if (index >= 0) {
+                    // console.log(d["properties"]["NAME"] + " " + jsonValueArray[index]);
+                    return (colorScale(jsonValueArray[index]));
+                  } else {
+                    return "white";
+                  }
+                })
+                .attr("stroke", "black")
+                .attr("d", path);
+
+              // var third_count = date_now.getTime();
+              // console.log("after redraw" + third_count)
+
+            });
           });
-        });
+          last_time = x_value_of_circle
+        }
       } else {
-        d3.json("src/assets/world_geojson.json").then(function (json: any) {
-          var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
-          var projection = d3.geoMercator().fitSize([width, height + 100], json);
-          var path = d3.geoPath().projection(projection);
-          d3.json("src/assets/temp_tyk_country_launch_num.json").then(function (country: any) {
-            var countryArray = new Array();
-            countryArray = country.map(d => d.country);
-            var valueArray = country.map(d => d.num);
-            var jsonValueArray = new Array();
+        if (last_time != x_value_of_circle) {
+          d3.json("src/assets/world_geojson.json").then(function (json: any) {
+            var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
+            var projection = d3.geoMercator().fitSize([width, height + 100], json);
+            var path = d3.geoPath().projection(projection);
+            d3.json("src/assets/temp_tyk_country_launch_num.json").then(function (country: any) {
+              var countryArray = new Array();
+              countryArray = country.map(d => d.country);
+              var valueArray = country.map(d => d.num);
+              var jsonValueArray = new Array();
 
-            var jsonCountryArray = new Array();
-            for (var j = 0; j < countryArray.length; j++) {
-              for (var i = 0; i < json.features.length; i++) {
-                if (json.features[i]["properties"]["NAME"] == countryArray[j]) {
-                  jsonCountryArray.push(json.features[i]);
-                  jsonValueArray.push(valueArray[j]);
+              var jsonCountryArray = new Array();
+              for (var j = 0; j < countryArray.length; j++) {
+                for (var i = 0; i < json.features.length; i++) {
+                  if (json.features[i]["properties"]["NAME"] == countryArray[j]) {
+                    jsonCountryArray.push(json.features[i]);
+                    jsonValueArray.push(valueArray[j]);
+                  }
                 }
               }
-            }
 
-            gg.selectAll(".states")
-              .data(json.features)
-              .attr("fill", function (d, i) {
-                var index = countryArray.indexOf(d["properties"]["NAME"]);
-                if (index >= 0) {
-                  // console.log(d["properties"]["NAME"] + " " + jsonValueArray[index]);
-                  return (colorScale(jsonValueArray[index]));
-                } else {
-                  return "white";
-                }
-              })
-              .attr("stroke", "black")
-              .attr("d", path);
+              gg.selectAll(".states")
+                .data(json.features)
+                .attr("fill", function (d, i) {
+                  var index = countryArray.indexOf(d["properties"]["NAME"]);
+                  if (index >= 0) {
+                    // console.log(d["properties"]["NAME"] + " " + jsonValueArray[index]);
+                    return (colorScale(jsonValueArray[index]));
+                  } else {
+                    return "white";
+                  }
+                })
+                .attr("stroke", "black")
+                .attr("d", path);
+            });
           });
-        });
+          last_time=x_value_of_circle
+        }
       }
     }
   }
