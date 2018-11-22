@@ -25,14 +25,14 @@ export class SecondComponent implements OnInit {
   private createChart(): void{
     var flag = 0;
     var orbit_flag = "geo";
-    var winheight = window.innerWidth;
+    var winwidth = window.innerWidth;
     var margin = {left:20, top:20, bottom:20, right:100}
     var margin0 = {left:0, top:0, bottom:0, right:0}
     d3.select(".second").remove();
     var svg = d3.select("#orbits").append("svg") 
       .attr("class", "second")
-      .attr("width", winheight)
-      .attr("height", winheight/2),
+      .attr("width", winwidth)
+      .attr("height", winwidth/2),
       width = +svg.attr("width")-margin.left-margin.right,
       height = +svg.attr("height")-margin.top-margin.bottom;
     var earth_radius = 6400;
