@@ -14,12 +14,25 @@ export class SecondComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.createChart();
+  }
+  ngOnChanges():void{
+    this.createChart();
+  }
+  onResize(){
+    this.createChart();
+  }
+  private createChart(): void{
+    var flag = 0;
+    var orbit_flag = "geo";
+    var winheight = window.innerWidth;
     var margin = {left:20, top:20, bottom:20, right:100}
     var margin0 = {left:0, top:0, bottom:0, right:0}
+    d3.select(".second").remove();
     var svg = d3.select("#orbits").append("svg") 
       .attr("class", "second")
-      .attr("width", "1400")
-      .attr("height", "700"),
+      .attr("width", winheight)
+      .attr("height", winheight/2),
       width = +svg.attr("width")-margin.left-margin.right,
       height = +svg.attr("height")-margin.top-margin.bottom;
     var earth_radius = 6400;
@@ -223,6 +236,7 @@ export class SecondComponent implements OnInit {
 
       d3.select("#show_low")
       .on("click", function(){
+        orbit_flag = "leo";
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
@@ -231,10 +245,10 @@ export class SecondComponent implements OnInit {
           return +d3.select(this).attr("cx");
         })
         .attr("cx", function(d:any){
-          return radius_scale_leo(+d3.select(this).attr("saved_x"));
+          return radius_scale_leo(+d3.select(this).attr(flag?"saved_x2":"saved_x"));
         })
         .attr("cy", function(d:any){
-          return radius_scale_leo(+d3.select(this).attr("saved_y"));
+          return radius_scale_leo(+d3.select(this).attr(flag?"saved_y2":"saved_y"));
         })
 
 
@@ -273,6 +287,7 @@ export class SecondComponent implements OnInit {
 
       d3.select("#show_medium")
       .on("click", function(){
+        orbit_flag = "meo";
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
@@ -281,10 +296,10 @@ export class SecondComponent implements OnInit {
           return +d3.select(this).attr("cx");
         })
         .attr("cx", function(d:any){
-          return radius_scale_meo(+d3.select(this).attr("saved_x"));
+          return radius_scale_meo(+d3.select(this).attr(flag?"saved_x2":"saved_x"));
         })
         .attr("cy", function(d:any){
-          return radius_scale_meo(+d3.select(this).attr("saved_y"));
+          return radius_scale_meo(+d3.select(this).attr(flag?"saved_y2":"saved_y"));
         })
 
 
@@ -323,6 +338,7 @@ export class SecondComponent implements OnInit {
 
       d3.select("#show_g")
       .on("click", function(){
+        orbit_flag = "geo";
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
@@ -331,10 +347,10 @@ export class SecondComponent implements OnInit {
           return +d3.select(this).attr("cx");
         })
         .attr("cx", function(d:any){
-          return radius_scale_geo(+d3.select(this).attr("saved_x"));
+          return radius_scale_geo(+d3.select(this).attr(flag?"saved_x2":"saved_x"));
         })
         .attr("cy", function(d:any){
-          return radius_scale_geo(+d3.select(this).attr("saved_y"));
+          return radius_scale_geo(+d3.select(this).attr(flag?"saved_y2":"saved_y"));
         })
 
 
@@ -526,6 +542,7 @@ export class SecondComponent implements OnInit {
 
       d3.select("#donut")
       .on("click", function(){
+        flag = 1;
         svg.selectAll(".satellites")
         .attr("saved_x2", function(d:any){
           var xrange = Math.random();
@@ -542,15 +559,12 @@ export class SecondComponent implements OnInit {
           }
           else if(d["Country of Operator/Owner"] == "Russia"){
             if(+d["Perigee"] <= 1500){
-              console.log("RUSSIA, LEO")
               xrange = Math.random() * 0.07 + 0.51;
             }
             else if (+d["Perigee"] > 7815 && +d["Perigee"] <= 23551){
               xrange = Math.random() * 0.26 + 0.28;
             }
             else if (+d["Perigee"] > 32618 && +d["Perigee"] <= 37782){
-              console.log("RUSSIA, GEO")
-
               xrange = Math.random() * 0.05 + 0.36;
             }
           }
@@ -595,84 +609,75 @@ export class SecondComponent implements OnInit {
         .attr("id", function(d,i){
           return d["Country of Operator/Owner"]  +"," +d["Class of Orbit"];
         })
+        var r_s;
+        if(orbit_flag == "leo"){
+          r_s = radius_scale_leo;
+        }
+        else if(orbit_flag == "meo"){
+          r_s = radius_scale_meo;
+        }
+        else if(orbit_flag == "geo"){
+          r_s = radius_scale_geo;
+        }
         svg.selectAll(".satellites")
         .transition()
         .delay(500)
         .duration(1000)
         .attr("cx", function(d:any){
-          return radius_scale_geo(+d3.select(this).attr("saved_x2"));
+          return r_s(+d3.select(this).attr("saved_x2"));
         })
         .attr("cy", function(d:any){
-          return radius_scale_geo(+d3.select(this).attr("saved_y2"));
-
+          return r_s(+d3.select(this).attr("saved_y2"));
         })
       })
 
+      d3.select("#reset")
+      .on("click", function(){
+        flag = 0;
+        orbit_flag = "geo";
+        svg.selectAll(".satellites")
+        .transition()
+        .delay(500)
+        .duration(2000)
+        .attr("fill", "gold")
+        .attr("cx", function(d:any){
+          return radius_scale_geo(+d3.select(this).attr("saved_x"));
+        })
+        .attr("cy", function(d:any){
+          return radius_scale_geo(+d3.select(this).attr("saved_y"));
+        })
 
+        svg.selectAll(".earth")
+        .transition()
+        .delay(500)
+        .duration(2000)
+        .attr("x", width/2 - radius_scale_geo(6400))
+        .attr("y", -radius_scale_geo(6400))
+        .attr("width", radius_scale_geo(6400)*2)
+        .attr("height", radius_scale_geo(6400)*2)
 
+        svg.select("#leo")
+        .transition()
+        .delay(500)
+        .duration(2000)
+        .attr("stroke-width", radius_scale_geo(1311))
+        .attr("r", radius_scale_geo(6400+936))
+
+        arc2.outerRadius(radius_scale_geo(6400+7815))
+        .innerRadius(radius_scale_geo(6400+23551))
+
+        svg.select("#meo")
+        .transition()
+        .delay(500)
+        .duration(2000)
+        .attr("d", arc2)
+
+        svg.select("#geo")
+        .transition()
+        .delay(500)
+        .duration(2000)
+        .attr("r", radius_scale_geo(6400+35200))
+      })
     })
-    
-    // svg.append("circle")
-    //   .attr("class", "earth")
-    //   .attr("cx", width/2)
-    //   .attr("r", radius_scale_earth(6400+20000)) //6400km
-    //   .attr("stroke", "black")
-    //   .attr("fill", "none")
-    //   .attr("stroke-width", "30px")
-    //   .transition()
-    //   .delay(500)
-    //   .duration(2000)
-    //   .attr("r", radius_scale_geo(6400+20000))
-    
-    // var arc = d3.arc()
-    // .outerRadius(radius_scale_geo(6400+46200))
-    // .innerRadius(radius_scale_geo(6400+40000))
-    // .startAngle(Math.PI * 0.5)
-    // .endAngle(Math.PI*1.5);
-
-    // svg.append("g")
-    // .attr("transform", "translate(" + (width / 2) + "," +height + ")")
-    // .append("path")
-    // .attr("d",arc)
-    // .transition()
-    // .delay(500)
-    // .duration(3000)
-    // .attr("transform", "translate(" + 0 + "," + -height + ")");
-
-
-    
-
-
-    // var meo_pie = d3.pie<any>()
-    // .sort(null)
-    // .value(function(d:any){return d.value;});
-
-    // var path = d3.arc()
-    // .outerRadius(radius_scale_geo(6400+25000))
-    // .innerRadius(radius_scale_geo(6400+23000));
-
-    // var label = d3.arc()
-    // .outerRadius(radius_scale_geo(6400+25000))
-    // .innerRadius(radius_scale_geo(6400+23000));
-
-    // var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-    // d3.csv("src/assets/meo_pie.csv").then(function(data:any){
-    // var arc_meo = svg.append("g").attr("transform", "translate(" + (width / 2) + "," +height/2 + ")")
-    // .selectAll(".arc")
-    // .data(meo_pie(data))
-    // .enter()
-    // .append("g")
-    // .attr("class", "arc");
-
-    // arc_meo.append("path")
-    //   .attr("d", <any>path)
-    //   .attr("fill", function(d) { return color(d.data.value); });
-
-    // arc_meo.append("text")
-    //   .attr("transform", function(d:any) { return "translate(" + label.centroid(d) + ")"; })
-    //   .attr("dy", "0.35em")
-    //   .text(function(d:any) { return d.data.country; });
-
-    // })
   }
 }

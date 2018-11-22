@@ -1,4 +1,9 @@
-
+/* #orbits {
+    width: 90%;
+}
+.second {
+    width: 90%;
+} */
 #tooltip {
     position: absolute;
     min-width :90px;
