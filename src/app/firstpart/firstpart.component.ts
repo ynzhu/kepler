@@ -19,7 +19,7 @@ export class FirstpartComponent implements OnInit {
       .append("svg")
       .attr("class", "first")
       .attr("width", "1280")
-      .attr("height", "700"),
+      .attr("height", "1500"),
       width = +svg.attr("width"),
       height = +svg.attr("height");
 
@@ -28,7 +28,7 @@ export class FirstpartComponent implements OnInit {
 
 
     d3.json("src/assets/world_geojson.json").then(function (json: any) {
-      var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0,300]);
+      var colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, 300]);
       var projection = d3.geoMercator().fitSize([width, height + 100], json);
       var path = d3.geoPath().projection(projection);
 
@@ -122,10 +122,58 @@ export class FirstpartComponent implements OnInit {
           .append("text")
           .attr("x", width - 200 + 55)
           .attr("y", function (d, i) { return height - 200 - i * 20; })
-          .text(function (d) { return Math.round(d/10) + " Satellites" });
+          .text(function (d) { return Math.round(d / 10) + " Satellites" });
       })
     });
 
-  }
+    var width = 960;
+    var height = 500;
+    var radius = 20;
+    var margin = 100;
 
+    var x1 = margin;
+    var x2 = width - margin;
+    var y = height / 2;
+
+    var drag: any = d3.drag()
+      .on("drag", dragmove);
+
+    var svg_slider = d3.select(".first")
+      .append("g")
+      .attr("transform", "translate(0 500)")
+      .attr("width", width)
+      .attr("height", height)
+      .datum({
+        x: width / 2,
+        y: height / 2
+      });
+
+    var line = svg_slider.append("line")
+      .attr("x1", x1)
+      .attr("x2", x2)
+      .attr("y1", y)
+      .attr("y2", y)
+      .style("stroke", "black")
+      .style("stroke-linecap", "round")
+      .style("stroke-width", 5);
+
+    var circle = svg_slider.append("circle")
+      .attr("id", "slider_circle")
+      .attr("r", radius)
+      .attr("cy", function (d) { return d.y; })
+      .attr("cx", function (d) { return d.x; })
+      .style("cursor", "ew-resize")
+      .call(drag);
+
+    function dragmove(d) {
+      var x = d3.event.x;
+      x = x < x1 ? x1 : x > x2 ? x2 : x;
+      d.x = x;
+      circle.attr("cx", x);
+      var x_value_of_circle: any = svg
+      .select('#slider_circle')
+      .attr("cx")
+      console.log(x_value_of_circle)
+    }
+  }
 }
