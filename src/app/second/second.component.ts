@@ -40,7 +40,7 @@ export class SecondComponent implements OnInit {
     var medium_earth_radius = 25000;
     var geosynchronous_radius = 40000;
     var country_list = ["United States", "China", "Russia", "Japan", "Others"];
-    var purpose_list = ["Communications", "Earth Observation", "Technology Development", "Navigation/Global Positioning", "Space Science", "Others"];
+    var purpose_list = ["Communications", "Earth Observation", "Tech Dev", "Navigation", "Space Science", "Others"];
     var radius_scale_earth = d3.scaleLinear().domain([0,earth_radius]).range([0,height]);
     var radius_reverse_earth = d3.scaleLinear().range([0,earth_radius]).domain([0,height]);
     var radius_scale_leo = d3.scaleLinear().domain([0,low_earth_radius+earth_radius]).range([0,height]);
