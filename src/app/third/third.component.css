@@ -1,0 +1,19 @@
+#mainTooltip {
+    position: absolute;
+    fill: #fff;
+    color: #fff;
+    text-anchor: middle;
+    text-align: center;
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.6);
+}
+#mainTooltip:before {
+    border: solid;
+    border-color: rgba(0,0,0,0.6) transparent;
+   
+    position: absolute;
+   
+}
+#mainTooltip.hidden {
+    display: none;
+}

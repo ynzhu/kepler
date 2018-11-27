@@ -1,4 +1,35 @@
+
+
 <p>
     Some fun charts
 </p>
 <div id="charts"></div>
+
+<div class = "card bg-primary text-white">
+    <div class="card-body">
+        <p>The pie chart showing Comparation among 5 countries percent working hour > 40 hrs.</p>
+        <p>Pieces show the country and its percent of working over 40 hr population and detail will show when you point on.</p>
+    </div>
+</div>
+<div id="mainTooltip" class="hidden">
+	<p><span id="value"></span></p>
+</div>
+<div id="pie_chart"width = "1000" height="1000">
+    <svg id ="chart-svg1" width="800" height="800"></svg> 
+</div>
+
+<div #chart2 id="line_chart" (window:resize)="onResize()"></div>
+
+<h2>Bar Chart</h2>
+
+    <div id="p2">
+        <div>
+            <button type="button" class="btn btn-primary" id="top5">Top 5</button>
+            <button type="button" class="btn btn-primary" id="reset">Reset</button>
+            <button type="button" class="btn btn-primary" id="all10">All 10</button>
+            <button type="button" class="btn btn-primary" id="bottom5">Bottom 5</button>
+            <button type="button" class="btn btn-primary" id="sortalphabetically">Sort Alphabetically</button>
+            <button type="button" class="btn btn-primary" id="sortascendingbyvalue">Sort Ascending By Value</button>
+            <button type="button" class="btn btn-primary" id="sortdescendingbyvalue">Sort Descending By Value</button>
+        </div>
+    </div>
